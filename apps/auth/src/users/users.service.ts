@@ -1,4 +1,5 @@
 import {
+  HttpException,
   Injectable,
   UnauthorizedException,
   UnprocessableEntityException,
