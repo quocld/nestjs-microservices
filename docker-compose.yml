@@ -36,6 +36,25 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+  email:
+    build:
+      context: .
+      dockerfile: ./apps/email/Dockerfile
+      target: development
+    command: npm run start:dev email
+    env_file:
+      - ./apps/email/.env
+    depends_on:
+      - mongodb-primary
+      - mongodb-secondary
+      - mongodb-arbiter
+      - rabbitmq
+      - auth
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3002:3002'
   auth:
     build:
       context: .

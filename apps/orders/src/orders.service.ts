@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { BILLING_SERVICE } from './constants/services';
+import { BILLING_SERVICE, EMAIL_SERVICE } from './constants/services';
 import { CreateOrderDto } from './dto/create-order.request';
 import { OrdersRepository } from './orders.repository';
 
@@ -10,7 +10,17 @@ export class OrdersService {
   constructor(
     private readonly ordersRepository: OrdersRepository,
     @Inject(BILLING_SERVICE) private billingClient: ClientProxy,
+    @Inject(EMAIL_SERVICE) private emailClient: ClientProxy,
   ) {}
+
+  async sendMailOrder(request: CreateOrderDto) {
+    try {
+      this.emailClient.emit('send_mail_order_created', { request });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createOrder(request: CreateOrderDto) {
     const session = await this.ordersRepository.startTransaction();
     try {
