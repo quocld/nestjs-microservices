@@ -15,12 +15,32 @@ export class EmailController {
     this.emailService.sendMail(1);
   }
 
+  @EventPattern('send-mail-for-new-post')
+  async sendMailForCreatedNewPost(
+    @Payload()
+    data: {
+      content: string;
+      user: {
+        _id: string;
+        email: string;
+        password: string;
+        fisrtName: string;
+        lastName: string;
+        phoneNumber: string;
+      };
+    },
+    @Ctx() context: RmqContext,
+  ): Promise<void> {
+    console.log(data);
+    await this.emailService.sendMailForNewPost(data);
+    this.rmqService.ack(context);
+  }
+
   @EventPattern('send_mail_order_created')
   async handleOrderCreated(
     @Payload() data: any,
     @Ctx() context: RmqContext,
   ): Promise<void> {
-    await console.log('SendMail.......');
     await this.emailService.sendMail(data);
     this.rmqService.ack(context);
   }

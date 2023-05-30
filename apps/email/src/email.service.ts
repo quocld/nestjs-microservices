@@ -64,4 +64,30 @@ export class EmailService {
         console.log(err);
       });
   }
+
+  async sendMailForNewPost(data: {
+    content: string;
+    user: {
+      _id: string;
+      email: string;
+      password: string;
+      fisrtName: string;
+      lastName: string;
+      phoneNumber: string;
+    };
+  }) {
+    await this.setTransport();
+    this.mailerService
+      .sendMail({
+        transporterName: 'gmail',
+        to: `${data.user.email}`,
+        from: 'quocldgcd191316@fpt.edu.vn',
+        subject: 'Create Post Sucessfully',
+        text: `Congratulations ${data.user.fisrtName} ${data.user.lastName}`,
+        html: `<b>Congratulations ${data.user.fisrtName} ${data.user.lastName} Your post now availble in TeamWhale now</b></br><p>Your post post content: ${data.content}</p>`,
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 }
