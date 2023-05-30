@@ -12,7 +12,6 @@ export class OrdersController {
   async createOrder(@Body() request: CreateOrderDto, @Req() req: any) {
     console.log(req.user);
     await this.ordersService.sendMailOrder(request);
-    return this.ordersService.createOrder(request);
   }
 
   @Get()

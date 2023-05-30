@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
-import { BILLING_SERVICE, EMAIL_SERVICE } from './constants/services';
+import { EMAIL_SERVICE } from './constants/services';
 import { OrdersController } from './orders.controller';
 import { OrdersRepository } from './orders.repository';
 import { OrdersService } from './orders.service';
@@ -28,9 +28,6 @@ import { Order, OrderSchema } from './schemas/order.schema';
     ]),
     RmqModule.register({
       name: EMAIL_SERVICE,
-    }),
-    RmqModule.register({
-      name: BILLING_SERVICE,
     }),
     AuthModule,
   ],

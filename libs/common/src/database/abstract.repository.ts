@@ -6,6 +6,7 @@ import {
   UpdateQuery,
   SaveOptions,
   Connection,
+  QueryOptions,
 } from 'mongoose';
 import { AbstractDocument } from './abstract.schema';
 
@@ -39,6 +40,10 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     }
 
     return document;
+  }
+
+  async findById(id: string, option?: QueryOptions): Promise<TDocument> {
+    return this.model.findById(id, option);
   }
 
   async findOneAndUpdate(
