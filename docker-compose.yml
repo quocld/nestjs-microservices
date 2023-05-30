@@ -11,7 +11,6 @@ services:
       - mongodb-primary
       - mongodb-secondary
       - mongodb-arbiter
-      - billing
       - auth
       - rabbitmq
     volumes:
@@ -19,23 +18,25 @@ services:
       - /usr/src/app/node_modules
     ports:
       - '3000:3000'
-  billing:
+  posts:
     build:
       context: .
-      dockerfile: ./apps/billing/Dockerfile
+      dockerfile: ./apps/posts/Dockerfile
       target: development
-    command: npm run start:dev billing
+    command: npm run start:dev posts
     env_file:
-      - ./apps/billing/.env
+      - ./apps/posts/.env
     depends_on:
       - mongodb-primary
       - mongodb-secondary
       - mongodb-arbiter
-      - rabbitmq
       - auth
+      - rabbitmq
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+    ports:
+      - '3004:3004'
   email:
     build:
       context: .
