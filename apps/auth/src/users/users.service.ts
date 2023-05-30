@@ -1,5 +1,8 @@
 import {
+  HttpCode,
   HttpException,
+  HttpStatus,
+  Inject,
   Injectable,
   UnauthorizedException,
   UnprocessableEntityException,
@@ -8,18 +11,33 @@ import * as bcrypt from 'bcrypt';
 import { UsersRepository } from './users.repository';
 import { CreateUserRequest } from './dto/create-user.request';
 import { User } from './schemas/user.schema';
+import { EMAIL_SERVICE } from './services/services';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    @Inject(EMAIL_SERVICE) private emailClient: ClientProxy,
+  ) {}
 
   async createUser(request: CreateUserRequest) {
     await this.validateCreateUserRequest(request);
     const user = await this.usersRepository.create({
       ...request,
       password: await bcrypt.hash(request.password, 10),
+      emailValidated: false,
     });
-    return user;
+
+    //create new url
+    const url = '123123123';
+
+    await this.emailClient.emit('send-mail-for-validate-user', {
+      ...user,
+      url,
+    });
+
+    return { ...user, password: '' };
   }
 
   private async validateCreateUserRequest(request: CreateUserRequest) {
@@ -36,7 +54,16 @@ export class UsersService {
   }
 
   async validateUser(email: string, password: string) {
-    const user = await this.usersRepository.findOne({ email });
+    const user = await this.usersRepository.findOne({
+      email: email,
+      emailValidated: true,
+    });
+    if (!user) {
+      return new HttpException(
+        'Email not registed or not verified',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
     const passwordIsValid = await bcrypt.compare(password, user.password);
     if (!passwordIsValid) {
       throw new UnauthorizedException('Credentials are not valid.');

@@ -65,17 +65,7 @@ export class EmailService {
       });
   }
 
-  async sendMailForNewPost(data: {
-    content: string;
-    user: {
-      _id: string;
-      email: string;
-      password: string;
-      fisrtName: string;
-      lastName: string;
-      phoneNumber: string;
-    };
-  }) {
+  async sendMailForNewPost(data: { content: string; user: any }) {
     await this.setTransport();
     this.mailerService
       .sendMail({
@@ -89,5 +79,9 @@ export class EmailService {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  async sendMailForValidateUser(data: any) {
+    console.log('create new User');
   }
 }

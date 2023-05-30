@@ -17,6 +17,9 @@ export class User extends AbstractDocument {
 
   @Prop()
   phoneNumber: string;
+
+  @Prop({ default: false })
+  emailValidated: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

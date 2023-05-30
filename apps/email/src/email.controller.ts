@@ -18,21 +18,22 @@ export class EmailController {
   @EventPattern('send-mail-for-new-post')
   async sendMailForCreatedNewPost(
     @Payload()
-    data: {
-      content: string;
-      user: {
-        _id: string;
-        email: string;
-        password: string;
-        fisrtName: string;
-        lastName: string;
-        phoneNumber: string;
-      };
-    },
+    data: any,
     @Ctx() context: RmqContext,
   ): Promise<void> {
     console.log(data);
     await this.emailService.sendMailForNewPost(data);
+    this.rmqService.ack(context);
+  }
+
+  @EventPattern('send-mail-for-validate-user')
+  async sendMailForValidateUser(
+    @Payload()
+    data: any,
+    @Ctx() context: RmqContext,
+  ): Promise<void> {
+    console.log(data);
+    await this.emailService.sendMailForValidateUser(data);
     this.rmqService.ack(context);
   }
 
